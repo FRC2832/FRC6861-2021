@@ -109,6 +109,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         //camera.processTargets();
+        
         camera.switchCameras();
         camera.processPowerCells();
     }
@@ -212,14 +213,16 @@ public class Robot extends TimedRobot {
 
                 case kCustomAuto5:
                     pid.autonLoop();
-                    auton.findPowerCells();
-                    if (!Auton.getMove1SecDone() && Auton.getNumSecondsMoved() < 2) {
-                        System.out.println("Moving one second.");
-                        auton.move1Sec();
-                    } else if (Auton.getNumSecondsMoved() < 2) {
-                        Auton.setMove1SecDone(false);
-                        auton.move1Sec();
+                    if (pid.getIngesterPosition() <= -4000) {
+                        auton.findPowerCells();
                     }
+                    // if (!Auton.getMove1SecDone() && Auton.getNumSecondsMoved() < 2) {
+                    //     System.out.println("Moving one second.");
+                    //     auton.move1Sec();
+                    // } else if (Auton.getNumSecondsMoved() < 2) {
+                    //     Auton.setMove1SecDone(false);
+                    //     auton.move1Sec();
+                    // }
                     break;
         
                 case kDefaultAuto:

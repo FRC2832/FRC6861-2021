@@ -22,6 +22,9 @@ public class Pi {
     private static boolean moveLeft;
     private static boolean hasFoundObjective;
     private static boolean hasLostPowerCell;
+    private static int lostCounter;
+    private static double previousY;
+    private static double currentY;
 
 
     public Pi() {
@@ -37,6 +40,7 @@ public class Pi {
     }
 
     public void processPowerCells() {
+        previousY = currentY;
         Number[] powerCellCenterXArray = powerCellCenterX.getNumberArray(new Number[0]);
         Number[] powerCellCenterYArray = powerCellCenterY.getNumberArray(new Number[0]);
         if (powerCellCenterXArray.length == 0) {
@@ -44,23 +48,37 @@ public class Pi {
             numPowerCells = 0;
             return;
         }
+        currentY = (double) powerCellCenterYArray[0];
+        // System.out.println("processPowerCells");
         hasFoundObjective = true;
-        if (powerCellCenterXArray.length < numPowerCells) {
-            hasLostPowerCell = true;
-        }
-        numPowerCells = powerCellCenterXArray.length;
+        // if (powerCellCenterXArray.length < numPowerCells) {
+        //     hasLostPowerCell = true;
+        // }
+        // numPowerCells = powerCellCenterXArray.length;
         double powerCellX = (double) powerCellCenterXArray[0];
-
-        if (powerCellX < (528) - 25) {
+        // System.out.println(powerCellX);
+        if (powerCellX < (618) - 15) {
             moveRight = false;
             moveLeft = true;
-        } else if (powerCellX > (528) + 25) {
+        } else if (powerCellX > (618) + 15) {
             moveLeft = false;
             moveRight = true;
         } else {
-            System.out.println("Power cell x value: " + powerCellX);
+            // System.out.println("Power cell x value: " + powerCellX);
             moveRight = false;
             moveLeft = false;
+        }
+        if (previousY - currentY > 10  && Auton.getAutonStep() == 2) {
+            if (lostCounter >= 0) {
+                hasLostPowerCell = true;
+                System.out.println("hasLostPowerCell");
+                System.out.println("power cell x: " + powerCellX);
+                lostCounter = 0;
+            } else
+                lostCounter++;
+        } else if (Auton.getAutonStep() == 2 && lostCounter != 0) {
+            System.out.println("lost counter: " + lostCounter);
+            lostCounter = 0;
         }
         
     }

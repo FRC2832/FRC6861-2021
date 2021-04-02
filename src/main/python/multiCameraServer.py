@@ -74,16 +74,16 @@ class PowerCellPipeline:
         """initializes all values to presets or None if need to be set
         """
 
-        self.__hsl_threshold_hue = [16.949152542372882, 77.8723404255319]
-        self.__hsl_threshold_saturation = [114.20050400357681, 255.0]
-        self.__hsl_threshold_luminance = [29.249735804576655, 246.29692832764508]
+        self.__hsl_threshold_hue = [18.644067796610173, 76.2680623506656]
+        self.__hsl_threshold_saturation = [97.39259439905705, 255.0]
+        self.__hsl_threshold_luminance = [46.05764540909643, 246.29692832764508]
 
         self.hsl_threshold_output = None
 
 
-        self.__rgb_threshold_red = [142.17625899280577, 248.47269624573377]
-        self.__rgb_threshold_green = [151.3489208633094, 255.0]
-        self.__rgb_threshold_blue = [0.0, 111.3993174061433]
+        self.__rgb_threshold_red = [103.7581798967606, 248.47269624573377]
+        self.__rgb_threshold_green = [88.91954233223593, 255.0]
+        self.__rgb_threshold_blue = [0.0, 102.30840831523422]
 
         self.rgb_threshold_output = None
 
@@ -98,17 +98,17 @@ class PowerCellPipeline:
         self.find_contours_output = None
 
         self.__filter_contours_contours = self.find_contours_output
-        self.__filter_contours_min_area = 140.0
+        self.__filter_contours_min_area = 800.0
         self.__filter_contours_min_perimeter = 0.0
         self.__filter_contours_min_width = 0.0
         self.__filter_contours_max_width = 1000.0
         self.__filter_contours_min_height = 0.0
         self.__filter_contours_max_height = 1000.0
         self.__filter_contours_solidity = [61.705989110707804, 100]
-        self.__filter_contours_max_vertices = 500.0
+        self.__filter_contours_max_vertices = 1000.0
         self.__filter_contours_min_vertices = 0.0
         self.__filter_contours_min_ratio = 1.0
-        self.__filter_contours_max_ratio = 1000.0
+        self.__filter_contours_max_ratio = 5.0
 
         self.filter_contours_output = None
 
@@ -643,6 +643,8 @@ def extra_power_cell_processing(pipeline):
     # print("all filtered contours:" +str(pipeline.filter_contours_output))
     for contour in pipeline.convex_hulls_output:
         x, y, w, h = cv2.boundingRect(contour)
+        #if y > 630:
+        #    continue
         center_x_positions.append(x + w / 2)
         center_y_positions.append(y + (h / 2))
     print('center power cell x', center_x_positions)

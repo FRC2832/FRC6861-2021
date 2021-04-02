@@ -28,7 +28,7 @@ public class Auton {
     private double stepTimeB7 = 3.0;
 
     private double stepTimeC1 = 2.0; // Default Move Time
-    private double stepTimeC2 = 1.5;
+    private double stepTimeC2 = 0.5;
     private double stepTimeC3 = 2.0;
 
     private static boolean move1SecDone = true;
@@ -50,6 +50,8 @@ public class Auton {
         m_gyro.setFusedHeading(0);
         driveStep = 1;
         autonStep = 1;
+        move1SecDone = true;
+        move1SecDone = true;
         numSecondsMoved = 0;
         m_timer.reset();
         m_timer.start();
@@ -78,11 +80,17 @@ public class Auton {
     }
 
     public void move1Sec() {
+        if (move1SecDone) {
+            m_timer.reset();
+            m_timer.start();
+            return;
+        }
         double timerValue = m_timer.get();
         SmartDashboard.putString("Auton Mode", "move1Sec");
         SmartDashboard.putNumber("Auton Step", driveStep);
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading());
         SmartDashboard.putNumber("Timer", timerValue);
+        System.out.println("timer:" + timerValue);
         if ((timerValue < stepTimeC2) && (driveStep == 1)) {
             driveTrain.driveArcade(0.5, 0.0);
         } else if ((timerValue > stepTimeC2) && (driveStep == 1)) {
@@ -405,10 +413,10 @@ public class Auton {
     public void centerRobot(boolean isFindingPowerCells) {
         // System.out.println("centering robot");
         if (Pi.getMoveLeft()) {
-            driveTrain.driveTank(-0.12, 0.12);
+            driveTrain.driveTank(-0.14, 0.14);
             System.out.println("turning left");
         } else if (Pi.getMoveRight()) {
-            driveTrain.driveTank(0.12, -0.12);
+            driveTrain.driveTank(0.14, -0.14);
             System.out.println("turning right");
         } else {
             driveTrain.driveTank(0, 0);
@@ -425,6 +433,7 @@ public class Auton {
         System.out.println("" + autonStep);
         switch(autonStep) {
             case 1:
+                Pi.setHasLostPowerCell(false);
                 centerRobot(true);
                 ingester.ingesterAuton(1.0);
                 // autonStep++;
@@ -438,19 +447,25 @@ public class Auton {
                 break;
             case 3:
                 setMove1SecDone(false);
+                ingester.ingesterAuton(1.0);
+                move1Sec();
                 autonStep++;
                 break;
             case 4:
                 ingester.ingesterAuton(1.0);
-                driveTrain.driveTank(0.25, 0.25);
+                move1Sec();
                 if (getNumSecondsMoved() >= 2) {
                     setMove1SecDone(true);
                     driveStep = 1;
                     autonStep++;
-                }
+                } else if (getMove1SecDone()) {
+                    setMove1SecDone(false);
+                    driveStep = 1;
+                } 
                 break;
             case 5:
                 driveTrain.driveTank(0.0, 0.0);
+                ingester.ingesterAuton(0.0);
                 autonStep = 1;
                 break;
                 //System.out.println(panel.getCurrent(2));

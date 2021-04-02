@@ -152,15 +152,17 @@ public class PID {
 		// 	targetPositionRotations = 0;
 		// 	_talon.set(ControlMode.Position, targetPositionRotations);
         // }
-
 		if (Auton.getPutIngesterDown()) {
 			targetPositionRotations = -4500;
 		} else {
 			targetPositionRotations = -600;
 		}
 		_talon.set(ControlMode.Position, targetPositionRotations);
-
+		SmartDashboard.putNumber("Ingester Lift Position", _talon.getSelectedSensorPosition());
 	}
 
+	public double getIngesterPosition() {
+		return _talon.getSelectedSensorPosition(); 
+	}
 
 }
