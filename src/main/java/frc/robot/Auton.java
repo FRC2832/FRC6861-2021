@@ -16,6 +16,7 @@ public class Auton {
 
     private PigeonIMU m_gyro;
     private static int numSecondsMoved;
+    private static int numPowerCells;
 
     private double stepTimeA1 = 4.0;
     private double stepTimeA2 = 1.0;
@@ -53,6 +54,7 @@ public class Auton {
         move1SecDone = true;
         move1SecDone = true;
         numSecondsMoved = 0;
+        numPowerCells = 0;
         m_timer.reset();
         m_timer.start();
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading());
@@ -412,25 +414,34 @@ public class Auton {
     
     public void centerRobot(boolean isFindingPowerCells) {
         // System.out.println("centering robot");
-        if (Pi.getMoveLeft()) {
-            driveTrain.driveTank(-0.14, 0.14);
-            System.out.println("turning left");
-        } else if (Pi.getMoveRight()) {
-            driveTrain.driveTank(0.14, -0.14);
-            System.out.println("turning right");
-        } else {
+        // if (Pi.getMoveLeft()) {
+        //     driveTrain.driveTank(-0.13, 0.13);
+        //     System.out.println("turning left");
+        // } else if (Pi.getMoveRight()) {
+        //     driveTrain.driveTank(0.13, -0.13);
+        //     System.out.println("turning right");
+        // } else {
+        //     driveTrain.driveTank(0, 0);
+        //     System.out.println("not turning");
+        //     // System.out.println("move1SecDone = false");
+        //     //if (!isFindingPowerCells)
+        //     //    setMove1SecDone(false);
+        //     //else //if (Pi.getHasFoundObjective())
+        //         autonStep++;
+        // }
+        double motor = Pi.getMotorVal();
+        System.out.println("motor: " + motor);
+        driveTrain.driveTank(motor * -1, motor);
+        if (motor < 0.05 && motor > -0.05) {
             driveTrain.driveTank(0, 0);
-            System.out.println("not turning");
-            // System.out.println("move1SecDone = false");
-            //if (!isFindingPowerCells)
-            //    setMove1SecDone(false);
-            //else //if (Pi.getHasFoundObjective())
-                autonStep++;
+            autonStep++;
         }
     }
 
     public void findPowerCells() {
         System.out.println("" + autonStep);
+        SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading() % 360);
+
         switch(autonStep) {
             case 1:
                 Pi.setHasLostPowerCell(false);
@@ -446,6 +457,7 @@ public class Auton {
                 }
                 break;
             case 3:
+                driveStep = 1;
                 setMove1SecDone(false);
                 ingester.ingesterAuton(1.0);
                 move1Sec();
@@ -466,9 +478,33 @@ public class Auton {
             case 5:
                 driveTrain.driveTank(0.0, 0.0);
                 ingester.ingesterAuton(0.0);
-                autonStep = 1;
+                numPowerCells++;
+                System.out.println("numPowerCells: " + numPowerCells);
+                if (numPowerCells >= 3) {
+                    autonStep++;
+                } else {
+                    resetNumSecondsMoved();
+                    autonStep = 1;
+                }
                 break;
                 //System.out.println(panel.getCurrent(2));
+            case 6:
+                double currentAngle = Math.abs(m_gyro.getFusedHeading() % 360);
+                System.out.println("gyro: " + currentAngle);
+                if(currentAngle < 180) {
+                    if (currentAngle < 10) {
+                        driveTrain.driveTank(0, 0);
+                    } else {
+                        driveTrain.driveTank(-0.14, 0.14);
+                    }
+                } else {
+                    if (currentAngle > 350) {
+                        driveTrain.driveTank(0, 0);
+                    } else {
+                        driveTrain.driveTank(0.14, -0.14);
+                    }
+                }
+                break;
             default:
                 break;
             
