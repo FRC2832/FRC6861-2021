@@ -40,6 +40,10 @@ public class Auton {
 
     private int driveStep = 1;
     private static int autonStep = 1;
+    private static int previousAutonStep = 1;
+
+    private static double motorOld;
+    private static double motorNew;
 
     public Auton(DriveTrain driveTrain) {
         this.driveTrain = driveTrain;
@@ -59,6 +63,7 @@ public class Auton {
         m_timer.start();
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading());
         isAutonDone = false;
+        driveTrain.driveTank(0,0);
     }
 
     // Autonomous mode: Robot positioned anywhere on the line
@@ -98,13 +103,13 @@ public class Auton {
         } else if ((timerValue > stepTimeC2) && (driveStep == 1)) {
             driveTrain.driveArcade(0, 0);
             driveStep = 2; // increment driveStep counter, move to next driveStep
-            // Auton.setMove1SecDone(true); // TODO: is this right?
+            //move1SecDone = true; // TODO: is this right?
             m_timer.reset();
             m_timer.start();
         } else {
             driveTrain.driveArcade(0, 0);
             System.out.println("move1SecDone = true");
-            setMove1SecDone(true);
+            move1SecDone = true;
             numSecondsMoved++;
             driveStep = 1;
             m_timer.reset();
@@ -123,14 +128,14 @@ public class Auton {
         } else if ((timerValue > stepTimeC3) && (driveStep == 1)) {
             driveTrain.driveArcade(0, 0);
             driveStep = 2; // increment driveStep counter, move to next driveStep
-            // Auton.setMove1SecDone(true); // TODO: is this right?
+            // move1SecDone = true; // TODO: is this right?
             m_timer.reset();
             m_timer.start();
         } else {
             driveTrain.driveArcade(0, 0);
             System.out.println("moveHalfSecDone = true");
-            Auton.setMoveHalfSecDone(true);
-            Auton.setIsScoreReady(true);
+            moveHalfSecDone = true;
+            isScoreReady = true;
             driveStep = 1;
             m_timer.reset();
             m_timer.start();
@@ -144,12 +149,12 @@ public class Auton {
         } else if ((timerValue > stepTimeC3) && (driveStep == 1)) {
             ingester.ingesterAuton(0.0);
             driveStep = 2; // increment driveStep counter, move to next driveStep
-            // Auton.setMove1SecDone(true); // TODO: is this right?
+            // move1SecDone = true; // TODO: is this right?
             m_timer.reset();
             m_timer.start();
         } else {
             ingester.ingesterAuton(0.0);
-            Auton.setIsScoreReady(false);
+            isScoreReady = false;
             isAutonDone = true;
             driveStep = 1;
             m_timer.reset();
@@ -425,21 +430,28 @@ public class Auton {
         //     System.out.println("not turning");
         //     // System.out.println("move1SecDone = false");
         //     //if (!isFindingPowerCells)
-        //     //    setMove1SecDone(false);
+        //     //    move1SecDone = false;
         //     //else //if (Pi.getHasFoundObjective())
         //         autonStep++;
         // }
-        double motor = Pi.getMotorVal();
-        System.out.println("motor: " + motor);
-        driveTrain.driveTank(motor * -1, motor);
-        if (motor < 0.05 && motor > -0.05) {
+        motorNew = Pi.getScaledMotorVal();
+        if (motorNew != motorOld) {
+            System.out.println("motor: " + motorNew);
+        }
+        driveTrain.driveTank(motorNew * -1, motorNew);
+        if (Pi.getMotorVal() < 0.05 && Pi.getMotorVal() > -0.05) {
             driveTrain.driveTank(0, 0);
             autonStep++;
         }
+        motorOld = motorNew;
     }
 
     public void findPowerCells() {
-        System.out.println("" + autonStep);
+        if (previousAutonStep != autonStep) {
+            System.out.println("Auton Step: " + autonStep);
+        }
+        previousAutonStep = autonStep;
+
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading() % 360);
 
         switch(autonStep) {
@@ -458,7 +470,7 @@ public class Auton {
                 break;
             case 3:
                 driveStep = 1;
-                setMove1SecDone(false);
+                move1SecDone = false;
                 ingester.ingesterAuton(1.0);
                 move1Sec();
                 autonStep++;
@@ -466,12 +478,12 @@ public class Auton {
             case 4:
                 ingester.ingesterAuton(1.0);
                 move1Sec();
-                if (getNumSecondsMoved() >= 2) {
-                    setMove1SecDone(true);
+                if (numSecondsMoved >= 2) {
+                    move1SecDone = true;
                     driveStep = 1;
                     autonStep++;
-                } else if (getMove1SecDone()) {
-                    setMove1SecDone(false);
+                } else if (move1SecDone) {
+                    move1SecDone = false;
                     driveStep = 1;
                 } 
                 break;
@@ -483,26 +495,45 @@ public class Auton {
                 if (numPowerCells >= 3) {
                     autonStep++;
                 } else {
-                    resetNumSecondsMoved();
+                    numSecondsMoved = 0;
                     autonStep = 1;
                 }
                 break;
                 //System.out.println(panel.getCurrent(2));
-            case 6:
+            case 6: // TODO? Might need to feed watchdog because of ingester.
                 double currentAngle = Math.abs(m_gyro.getFusedHeading() % 360);
                 System.out.println("gyro: " + currentAngle);
-                if(currentAngle < 180) {
-                    if (currentAngle < 10) {
-                        driveTrain.driveTank(0, 0);
-                    } else {
-                        driveTrain.driveTank(-0.14, 0.14);
-                    }
+                if (currentAngle < 10 || currentAngle > 350) {
+                    driveTrain.driveTank(0, 0);
+                    numSecondsMoved = 0;
+                    // autonStep++;
+                } else if (currentAngle < 180) {
+                    driveTrain.driveTank(-0.14, 0.14);
                 } else {
-                    if (currentAngle > 350) {
-                        driveTrain.driveTank(0, 0);
-                    } else {
-                        driveTrain.driveTank(0.14, -0.14);
+                    driveTrain.driveTank(0.14, -0.14);
+                }
+                // if(currentAngle < 180) {
+                //     if (currentAngle < 10) {
+                //         driveTrain.driveTank(0, 0);
+                //     } else {
+                //         driveTrain.driveTank(-0.14, 0.14);
+                //     }
+                // } else {
+                //     if (currentAngle > 350) {
+                //         driveTrain.driveTank(0, 0);
+                //     } else {
+                //         driveTrain.driveTank(0.14, -0.14);
+                //     }
+                // }
+                break;
+            case 7: 
+                if (numSecondsMoved >= 4) {
+                    driveTrain.driveTank(0, 0);
+                } else {
+                    if (move1SecDone) {
+                        move1SecDone = false;
                     }
+                    move1Sec();
                 }
                 break;
             default:

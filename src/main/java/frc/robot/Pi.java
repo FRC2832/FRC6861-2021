@@ -27,10 +27,14 @@ public class Pi {
     private static double previousY;
     private static double currentY;
     private static double motorVal;
+    private static double scaledMotorVal;
+    private static double pidValOld;
+    private final double maxMotorSpeed = 0.3;
+    private final double minMotorSpeed = 0.125;
 
 
     public Pi() {
-        pid = new PIDController(1.1, 0.0, 0.6); //TODO put in sliding scale
+        pid = new PIDController(0.35, 0.05, 0.8);
         m_driverController1 = new XboxController(0);
         netTableInstance = NetworkTableInstance.getDefault();
         table = netTableInstance.getTable("datatable");
@@ -58,18 +62,35 @@ public class Pi {
         hasFoundObjective = true;
         double powerCellX = (double) powerCellCenterXArray[0];
         // System.out.println(powerCellX);
-        double pidVal = pid.calculate(powerCellX, 575);
-        // System.out.println("pidVal: " + pidVal);
+        double pidVal = pid.calculate(powerCellX, 571);
         if (pidVal < 0) {
             motorVal = pidVal / 660;
-        } else {
+            if (pidVal != pidValOld) {
+                System.out.println("motorVal: " + motorVal);
+            }
+            scaledMotorVal = motorVal * (maxMotorSpeed - minMotorSpeed);
+            scaledMotorVal -= minMotorSpeed;
+        } else if (pidVal > 0) {
             motorVal = pidVal / 540;
+            if (pidVal != pidValOld) {
+                System.out.println("motorVal: " + motorVal);
+            }
+            scaledMotorVal = motorVal * (maxMotorSpeed - minMotorSpeed);
+            scaledMotorVal += minMotorSpeed;
+        } else {
+            scaledMotorVal = 0;
+            motorVal = 0;
+            System.out.println("motorVal = 0");
+        }
+        if (pidVal != pidValOld) {
+            System.out.println("motorVal scaled: " + scaledMotorVal);
         }
         if (motorVal > 0.3) {
             motorVal = 0.3;
         } else if (motorVal < -0.3) {
             motorVal = -0.3;
         }
+        pidValOld = pidVal;
         // System.out.println("motorVal: " + motorVal);
         // if (powerCellX < (575) - 13) {
         //     moveRight = false;
@@ -104,6 +125,10 @@ public class Pi {
 
     public static double getMotorVal() {
         return motorVal;
+    }
+
+    public static double getScaledMotorVal() {
+        return scaledMotorVal;
     }
 
     public void processTargets() {
