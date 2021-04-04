@@ -32,13 +32,13 @@ public class Pi {
     private final double maxMotorSpeed = 0.3;
     private final double minMotorSpeed = 0.125;
 
-
     public Pi() {
         pid = new PIDController(0.35, 0.05, 0.8);
         m_driverController1 = new XboxController(0);
         netTableInstance = NetworkTableInstance.getDefault();
         table = netTableInstance.getTable("datatable");
-        // camSelect = netTableInstance.getTable("SmartDashboard").getEntry("camNumber");
+        // camSelect =
+        // netTableInstance.getTable("SmartDashboard").getEntry("camNumber");
         targetCenterX = table.getEntry("targetX");
         powerCellCenterX = table.getEntry("powerCellX");
         powerCellCenterY = table.getEntry("powerCellY");
@@ -52,29 +52,41 @@ public class Pi {
         Number[] powerCellCenterXArray = powerCellCenterX.getNumberArray(new Number[0]);
         Number[] powerCellCenterYArray = powerCellCenterY.getNumberArray(new Number[0]);
         if (powerCellCenterXArray.length == 0) {
-            hasFoundObjective = false;
-            hasLostPowerCell = true;
+            if (hasFoundObjective) {
+                hasFoundObjective = false;
+                hasLostPowerCell = true;
+                System.out.println("hasLostPowerCell due to empty array");
+            }
+            // scaledMotorVal = 0;
+            // motorVal = 0;
+
             return;
         }
+        // System.out.print("Power cell x values: ");
+        // for (Number n : powerCellCenterXArray) {
+        // double d = (double) n;
+        // System.out.print(d + ", ");
+        // }
+        // System.out.println();
         currentY = (double) powerCellCenterYArray[0];
         double deltaY = previousY - currentY;
         // System.out.println("processPowerCells");
         hasFoundObjective = true;
         double powerCellX = (double) powerCellCenterXArray[0];
         // System.out.println(powerCellX);
-        double pidVal = pid.calculate(powerCellX, 571);
+        double pidVal = pid.calculate(powerCellX, 571); //original 571
         if (pidVal < 0) {
             motorVal = pidVal / 660;
-            if (pidVal != pidValOld) {
-                System.out.println("motorVal: " + motorVal);
-            }
+            // if (pidVal != pidValOld) {
+            //     System.out.println("motorVal: " + motorVal);
+            // }
             scaledMotorVal = motorVal * (maxMotorSpeed - minMotorSpeed);
             scaledMotorVal -= minMotorSpeed;
         } else if (pidVal > 0) {
             motorVal = pidVal / 540;
-            if (pidVal != pidValOld) {
-                System.out.println("motorVal: " + motorVal);
-            }
+            // if (pidVal != pidValOld) {
+            //     System.out.println("motorVal: " + motorVal);
+            // }
             scaledMotorVal = motorVal * (maxMotorSpeed - minMotorSpeed);
             scaledMotorVal += minMotorSpeed;
         } else {
@@ -82,9 +94,9 @@ public class Pi {
             motorVal = 0;
             System.out.println("motorVal = 0");
         }
-        if (pidVal != pidValOld) {
-            System.out.println("motorVal scaled: " + scaledMotorVal);
-        }
+        // if (pidVal != pidValOld) {
+        // System.out.println("motorVal scaled: " + scaledMotorVal);
+        // }
         if (motorVal > 0.3) {
             motorVal = 0.3;
         } else if (motorVal < -0.3) {
@@ -93,34 +105,34 @@ public class Pi {
         pidValOld = pidVal;
         // System.out.println("motorVal: " + motorVal);
         // if (powerCellX < (575) - 13) {
-        //     moveRight = false;
-        //     moveLeft = true;
+        // moveRight = false;
+        // moveLeft = true;
         // } else if (powerCellX > (575) + 13) {
-        //     moveLeft = false;
-        //     moveRight = true;
+        // moveLeft = false;
+        // moveRight = true;
         // } else {
-        //     // System.out.println("Power cell x value: " + powerCellX);
-        //     moveRight = false;
-        //     moveLeft = false;
+        // // System.out.println("Power cell x value: " + powerCellX);
+        // moveRight = false;
+        // moveLeft = false;
         // }
         // if (deltaY != 0) {
-        //     System.out.println("delta y: " + deltaY);
+        // System.out.println("delta y: " + deltaY);
         // }
-        if (deltaY > 10  && Auton.getAutonStep() == 2) {
+        if (deltaY > 10 && Auton.getAutonStep() == 2) {
             hasLostPowerCell = true;
-            System.out.println("hasLostPowerCell");
+            System.out.println("hasLostPowerCell due to delta y");
         }
-            // if (lostCounter >= 0) {         
-            //     System.out.println("hasLostPowerCell");
-            //     System.out.println("power cell x: " + powerCellX);
-            //     lostCounter = 0;
-            // } else
-            //     lostCounter++;
+        // if (lostCounter >= 0) {
+        // System.out.println("hasLostPowerCell");
+        // System.out.println("power cell x: " + powerCellX);
+        // lostCounter = 0;
+        // } else
+        // lostCounter++;
         // } else if (Auton.getAutonStep() == 2 && lostCounter != 0) {
-        //     System.out.println("lost counter: " + lostCounter);
-        //     lostCounter = 0;
+        // System.out.println("lost counter: " + lostCounter);
+        // lostCounter = 0;
         // }
-        
+
     }
 
     public static double getMotorVal() {
@@ -141,8 +153,8 @@ public class Pi {
             return;
         }
         hasFoundObjective = true;
-        double targetX = (double) targetCenterArray[targetCenterArray.length - 1]; //rightmost target
-        //System.out.println("target x value: " + targetX);
+        double targetX = (double) targetCenterArray[targetCenterArray.length - 1]; // rightmost target
+        // System.out.println("target x value: " + targetX);
         if (targetX < (CAM_X_RES / 2) - (CAM_X_RES * 0.05)) {
             moveRight = false;
             moveLeft = true;
@@ -184,14 +196,14 @@ public class Pi {
 
     public void switchCameras() {
         // if (m_driverController1.getStartButtonPressed()) {
-        //     if (!isButtonHeld) {
-        //         int currentCam = (int) camSelect.getNumber(0);
-        //         camSelect.setNumber((currentCam + 1) % 2);
-        //         isButtonHeld = true;
-        //     }
+        // if (!isButtonHeld) {
+        // int currentCam = (int) camSelect.getNumber(0);
+        // camSelect.setNumber((currentCam + 1) % 2);
+        // isButtonHeld = true;
+        // }
         // }
         // else {
-        //     isButtonHeld = false;
+        // isButtonHeld = false;
         // }
     }
 }
