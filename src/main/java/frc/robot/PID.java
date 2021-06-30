@@ -31,10 +31,13 @@ public class PID {
 	/** Save the target position to servo to */
 	double targetPositionRotations;
 
+	Gains _gain;
 
 	public void pidControl() {
 		SmartDashboard.putNumber("Ingester Lift Position", _talon.getSelectedSensorPosition());
 		
+		_gain = Constants.kGainDown;
+
 		targetPositionRotations = 0;
 		_talon.set(ControlMode.Position, targetPositionRotations);
 
@@ -69,12 +72,6 @@ public class PID {
 		 */
 		_talon.configAllowableClosedloopError(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-		/* Config Position Closed Loop gains in slot0, tsypically kF stays zero. */
-		_talon.config_kF(Constants.kPIDLoopIdx, Constants.kGains.kF, Constants.kTimeoutMs);
-		_talon.config_kP(Constants.kPIDLoopIdx, Constants.kGains.kP, Constants.kTimeoutMs);
-		_talon.config_kI(Constants.kPIDLoopIdx, Constants.kGains.kI, Constants.kTimeoutMs);
-		_talon.config_kD(Constants.kPIDLoopIdx, Constants.kGains.kD, Constants.kTimeoutMs);
-
 		/**
 		 * Grab the 360 degree position of the MagEncoder's absolute
 		 * position, and intitally set the relative sensor to match.
@@ -92,7 +89,7 @@ public class PID {
     
 	public void commonLoop() {
         SmartDashboard.putNumber("Ingester Lift Position", _talon.getSelectedSensorPosition());
-        
+
         /* Get Talon/Victor's current output percentage */
 		final double motorOutput = _talon.getMotorOutputPercent();
 
@@ -109,17 +106,26 @@ public class PID {
         if (_xBox.getBumperPressed(Hand.kRight)) {
 			targetPositionRotations = 0;
 			_talon.set(ControlMode.Position, targetPositionRotations);
+			_gain = Constants.kGainUp;
         }
         
 		if (_xBox.getBButtonPressed()) {
 			targetPositionRotations = -600;
 			_talon.set(ControlMode.Position, targetPositionRotations);
+			_gain = Constants.kGainUp;
         }
 
 		if (_xBox.getAButtonPressed()) {
 			targetPositionRotations = -4500;
 			_talon.set(ControlMode.Position, targetPositionRotations);
+			_gain = Constants.kGainDown;
 		}
+
+		/* Config Position Closed Loop gains in slot0, tsypically kF stays zero. */
+		_talon.config_kF(Constants.kPIDLoopIdx, _gain.kF, Constants.kTimeoutMs);
+		_talon.config_kP(Constants.kPIDLoopIdx, _gain.kP, Constants.kTimeoutMs);
+		_talon.config_kI(Constants.kPIDLoopIdx, _gain.kI, Constants.kTimeoutMs);
+		_talon.config_kD(Constants.kPIDLoopIdx, _gain.kD, Constants.kTimeoutMs);
 
 		/* If Talon is in position closed-loop, print some more info */
 		if (_talon.getControlMode() == ControlMode.Position) {
@@ -131,6 +137,11 @@ public class PID {
 			_sb.append("\ttrg:");
 			_sb.append(targetPositionRotations);
 			_sb.append("u");	/// Native Units
+
+			//check if going up + band around sensor target
+			if((targetPositionRotations > -1000) && (Math.abs(_talon.getSelectedSensorPosition(0)-targetPositionRotations) < 100)) {
+				_talon.set(ControlMode.PercentOutput,0);
+			}
 		}
 
 		/**
