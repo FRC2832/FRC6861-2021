@@ -150,7 +150,7 @@ public class PID {
 		 */
 		if (++_loops >= 10) {
 			_loops = 0;
-			System.out.println(_sb.toString());
+			//System.out.println(_sb.toString());
 		}
 
 		/* Reset built string for next loop */
