@@ -256,19 +256,19 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        System.out.println("Drive tank");
+        //System.out.println("Drive tank");
         driveTrain.driveTank();
-        System.out.println("Color Wheel");
+        //System.out.println("Color Wheel");
         colorWheel.colorWheelSpin();
-        System.out.println("Climber");
+        //System.out.println("Climber");
         climber.climber();
-        System.out.println("Injetser");
+        //System.out.println("Injetser");
         ingester.ingesterSweep();
-        System.out.println("pid");
+        //System.out.println("pid");
         pid.commonLoop();
-        System.out.println("SkyWalker");
+        //System.out.println("SkyWalker");
         skywalker.SkyWalk();
-        System.out.println("All teleop periodic statements have run");
+        //\System.out.println("All teleop periodic statements have run");
 
         // setCamera();
     }
