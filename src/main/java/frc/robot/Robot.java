@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         pid = new PID();
         skywalker = new SkyWalker();
-        auton = new Auton(driveTrain);
+        auton = new Auton(driveTrain, ingester);
         camera = new Pi();
         camServer = CameraServer.getInstance();
         jpegServ = camServer.addServer("10.68.61.62");
