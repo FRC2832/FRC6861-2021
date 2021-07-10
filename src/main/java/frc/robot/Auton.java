@@ -218,33 +218,43 @@ public class Auton {
         SmartDashboard.putNumber("Auton Step", driveStep);
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading());
         SmartDashboard.putNumber("Timer", m_timer.get());
-        if ((m_timer.get() < stepTimeA1) && (driveStep == 1)) {
-            driveTrain.driveArcade(0.6, 0.0);
-        } else if ((m_timer.get() > stepTimeA1) && (driveStep == 1)) {
-            driveTrain.driveArcade(0, 0);
-            driveStep = 2; // increment driveStep counter, move to next driveStep
-            m_timer.reset();
-            m_timer.start();
-        } else {
-            driveTrain.driveArcade(0, 0);
-        }
 
-        if ((m_timer.get() < stepTimeA2) && (driveStep == 2)) {
-            ingester.ingesterAuton(-1.0);
-        } else if ((m_timer.get() > stepTimeA2) && (driveStep == 2)) {
-            ingester.ingesterAuton(0.0);
-            driveStep = 3; // increment driveStep counter, move to next driveStep
-            m_timer.reset();
-            m_timer.start();
-        }
-
-        if ((m_timer.get() < stepTimeA3) && (driveStep == 3)) {
-            driveTrain.driveArcade(-0.6, 0.45);
-        } else if ((m_timer.get() > stepTimeA3) && (driveStep == 3)) {
-            driveTrain.driveArcade(0, 0);
-            driveStep = 4; // increment driveStep counter, move to next driveStep
-            m_timer.reset();
-            m_timer.start();
+        if (driveStep == 1) { //move to goal
+            if (m_timer.get() < stepTimeA1) {
+                driveTrain.driveArcade(0.6, 0.0);
+                // driveTrain.driveTank(-0.5, -0.5);
+                // System.out.println("driveStep: " + driveStep);
+            } else {
+                driveTrain.driveArcade(0, 0);
+                // System.out.println("timer: " + m_timer.get());
+                driveStep = 2; // increment driveStep counter, move to next driveStep
+                m_timer.reset();
+                m_timer.start();
+            } 
+        } else if (driveStep == 2) { //score
+            if (m_timer.get() < stepTimeA2) {
+                ingester.ingesterAuton(-1.0);
+                // System.out.println("driveStep: " + driveStep);
+                driveTrain.driveArcade(0, 0);
+            } else {
+                ingester.ingesterAuton(0.0);
+                driveTrain.driveArcade(0, 0);
+                // System.out.println("timer: " + m_timer.get());
+                driveStep = 3; // increment driveStep counter, move to next driveStep
+                m_timer.reset();
+                m_timer.start();
+            }
+        } else if (driveStep == 3) { //get out of the way
+            if (m_timer.get() < stepTimeA3) {
+                driveTrain.driveArcade(-0.6, 0.45);
+                // System.out.println("driveStep: " + driveStep);
+            } else {
+                driveTrain.driveArcade(0, 0);
+                // System.out.println("timer: " + m_timer.get());
+                driveStep = 4; // increment driveStep counter, move to next driveStep
+                m_timer.reset();
+                m_timer.start();
+            }
         } else {
             driveTrain.driveArcade(0, 0);
         }

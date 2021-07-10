@@ -111,7 +111,12 @@ public class Robot extends TimedRobot {
         //camera.processTargets();
         
         camera.switchCameras();
-        camera.processPowerCells();
+        camera.processPowerCells(); //ID10T error: Problem detected between chair and keyboard
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        driveTrain.setCoast(true);
     }
 
     /**
@@ -137,6 +142,7 @@ public class Robot extends TimedRobot {
         // m_gyro.setFusedHeading(0);
         //camera.processTargets();
         camera.processPowerCells();
+        driveTrain.setCoast(false);
     }
 
     /**
@@ -160,7 +166,7 @@ public class Robot extends TimedRobot {
             switch (m_autoSelected) {
                 case kCustomAuto1:
                     // Put custom auto code here
-                    System.out.println("Front of Goal: " + m_autoSelected);
+                    //System.out.println("Front of Goal: " + m_autoSelected);
                     auton.autonFrontGoal();
         
                     break;
@@ -249,6 +255,7 @@ public class Robot extends TimedRobot {
         climber.climberInit();
         pid.pidControl();
         colorWheel.colorInit();
+        driveTrain.setCoast(false);
     }
 
     /**

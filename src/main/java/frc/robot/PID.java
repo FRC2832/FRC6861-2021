@@ -139,9 +139,9 @@ public class PID {
 			_sb.append("u");	/// Native Units
 
 			//check if going up + band around sensor target
-			if((targetPositionRotations > -1000) && (Math.abs(_talon.getSelectedSensorPosition(0)-targetPositionRotations) < 100)) {
-				_talon.set(ControlMode.PercentOutput,0);
-			}
+			// if((targetPositionRotations > -1000) && (Math.abs(_talon.getSelectedSensorPosition(0)-targetPositionRotations) < 50)) { //was 100
+			// 	_talon.set(ControlMode.PercentOutput,0);
+			// }
 		}
 
 		/**

@@ -28,6 +28,21 @@ public class DriveTrain {
   
   private double mtrSpeed = -0.75;
   
+  public void setCoast(boolean coast) {
+    NeutralMode mode;
+    if (coast) {
+      mode = NeutralMode.Coast;
+    } else {
+      mode = NeutralMode.Brake;
+    }
+    //mode = coast ? NeutralMode.Coast : NeutralMode.Brake;
+
+    m_leftFtrMotor.setNeutralMode(mode);
+    m_rightFrtMotor.setNeutralMode(mode);
+    m_leftRrMotor.setNeutralMode(mode);
+    m_rightRrMotor.setNeutralMode(mode);
+  }
+
   public void driveTank() {
       m_leftFtrMotor.setNeutralMode(NeutralMode.Brake);
       m_rightFrtMotor.setNeutralMode(NeutralMode.Brake);

@@ -55,7 +55,7 @@ public class Pi {
             if (hasFoundObjective) {
                 hasFoundObjective = false;
                 hasLostPowerCell = true;
-                System.out.println("hasLostPowerCell due to empty array");
+                // System.out.println("hasLostPowerCell due to empty array");
             }
             // scaledMotorVal = 0;
             // motorVal = 0;
@@ -92,7 +92,7 @@ public class Pi {
         } else {
             scaledMotorVal = 0;
             motorVal = 0;
-            System.out.println("motorVal = 0");
+            // System.out.println("motorVal = 0");
         }
         // if (pidVal != pidValOld) {
         // System.out.println("motorVal scaled: " + scaledMotorVal);
@@ -120,7 +120,7 @@ public class Pi {
         // }
         if (deltaY > 10 && Auton.getAutonStep() == 2) {
             hasLostPowerCell = true;
-            System.out.println("hasLostPowerCell due to delta y");
+            // System.out.println("hasLostPowerCell due to delta y");
         }
         // if (lostCounter >= 0) {
         // System.out.println("hasLostPowerCell");
