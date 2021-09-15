@@ -26,7 +26,7 @@ public class DriveTrain {
   public SpeedControllerGroup rightMtrGroup = new SpeedControllerGroup(m_rightFrtMotor,m_rightRrMotor);
   public DifferentialDrive m_robotDrive = new DifferentialDrive(leftMtrGroup, rightMtrGroup);
   
-  private double mtrSpeed = -0.75;
+  private double mtrSpeed = -0.9;
   
   public void driveTank() {
       m_leftFtrMotor.setNeutralMode(NeutralMode.Brake);
