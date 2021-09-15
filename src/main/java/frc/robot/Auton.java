@@ -13,7 +13,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 public class Auton {
     private static Timer m_timer = new Timer();
     private DriveTrain driveTrain;
-    private Ingester ingester = new Ingester();
+    private Ingester ingester;
     private PowerDistributionPanel panel;
 
     private PigeonIMU m_gyro;
@@ -49,8 +49,9 @@ public class Auton {
     private static double motorOld;
     private static double motorNew;
 
-    public Auton(DriveTrain driveTrain) {
+    public Auton(DriveTrain driveTrain, Ingester ingest) {
         this.driveTrain = driveTrain;
+        this.ingester = ingest;
         this.m_gyro = new PigeonIMU(driveTrain.m_leftRrMotor);
         panel = new PowerDistributionPanel();
     }
