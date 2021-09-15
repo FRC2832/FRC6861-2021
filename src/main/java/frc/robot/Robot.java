@@ -69,9 +69,9 @@ public class Robot extends TimedRobot {
         // mjpegServer1.setSource(usbCameraBack);
         // mjpegServer1.setSource(usbCameraFront);
         // m_chooser.setDefaultOption("Default 2s Move", kDefaultAuto);
-        m_chooser.setDefaultOption("Turn towards Center", kCustomAuto4);
+        m_chooser.addOption("Turn towards Center", kCustomAuto4);
         m_chooser.addOption("Default 2s Move", kDefaultAuto);
-        m_chooser.addOption("Front of Goal", kCustomAuto1);
+        m_chooser.setDefaultOption("Front of Goal", kCustomAuto1);
         m_chooser.addOption("Left of Goal", kCustomAuto2);
         m_chooser.addOption("Right of Goal", kCustomAuto3);
         m_chooser.addOption("Find Power Cell", kCustomAuto5);

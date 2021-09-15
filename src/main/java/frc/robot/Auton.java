@@ -61,7 +61,7 @@ public class Auton {
         driveStep = 1;
         autonStep = 1;
         previousAutonStep = 0;
-        move1SecDone = true;
+        move1SecDone = false;
         numSecondsMoved = 0;
         numPowerCells = 0;
         m_timer.reset();
@@ -104,9 +104,9 @@ public class Auton {
         SmartDashboard.putNumber("Gyro Fused Heading", m_gyro.getFusedHeading());
         SmartDashboard.putNumber("Timer", timerValue);
         // System.out.println("timer:" + timerValue);
-        if ((timerValue < stepTimeC2) && (driveStep == 1)) {
+        if ((timerValue < stepTimeC1) && (driveStep == 1)) {
             driveTrain.driveArcade(0.5, 0.0);
-        } else if ((timerValue > stepTimeC2) && (driveStep == 1)) {
+        } else if ((timerValue > stepTimeC1) && (driveStep == 1)) {
             driveTrain.driveArcade(0, 0);
             driveStep = 2; // increment driveStep counter, move to next driveStep
             // move1SecDone = true; // TODO: is this right?
@@ -246,7 +246,7 @@ public class Auton {
             driveStep = 4; // increment driveStep counter, move to next driveStep
             m_timer.reset();
             m_timer.start();
-        } else {
+        } else if (driveStep == 3) {
             driveTrain.driveArcade(0, 0);
         }
     }
