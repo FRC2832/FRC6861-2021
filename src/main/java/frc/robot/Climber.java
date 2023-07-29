@@ -18,9 +18,8 @@ import edu.wpi.first.wpilibj.Relay;
 
 
 public class Climber {
-    private static final int sparkID = 3;
-    public XboxController m_driverController1 = new XboxController(0);
-    public CANSparkMax m_motor = new CANSparkMax(sparkID, MotorType.kBrushless);
+    public XboxController m_driverController1 = new XboxController(Constants.driverControllerID); // 0
+    public CANSparkMax m_motor = new CANSparkMax(Constants.climberMotorCANID, MotorType.kBrushless); // ID: 3 Motortype:Brushless
     public Relay m_latch = new Relay(0);
     public CANEncoder m_encoder;
 

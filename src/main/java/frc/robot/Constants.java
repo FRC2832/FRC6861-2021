@@ -38,4 +38,31 @@ public class Constants {
      */
 	static final Gains kGainUp = new Gains(0.3, 2e-5, 1, 0.0, 0, 0.4);
 	static final Gains kGainDown = new Gains(0.2, 0, 1, 0.0, 0, 1);
+
+	// Current limit constants
+	public static final int ingestorLiftContinuousAmpLimit = 30;
+
+	// Motor ID constants
+	public static final int _talonMotorID = 13;
+	public static final int sweepMotorID = 2;
+	public static final int walkMotorID = 4;
+	public static final int colorWheelMotorID = 5;
+	public static final int climberMotorCANID = 3;
+
+	// Controller Constants
+	public static final int operatorControllerID = 1;
+	public static final int driverControllerID = 0;
+
+	// Drivetrain constants
+	public static final int rightRearMotor = 1;
+	public static final int rightFrontMotor = 0;
+	public static final int leftFrontMotor = 15;
+	public static final int leftRearMotor = 14;
+	public static final double driveTrainMotorSpeed = -0.9;
+
+	// Ingestor Lift Positions
+	public static final double lowerIngestorPos = -4200;
+	public static final double shootingIngestorPos = -600;
+	public static final double stowIngestorPos = 0;
+	
 }

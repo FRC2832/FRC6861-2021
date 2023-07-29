@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class SkyWalker {
     
-    private SpeedController m_walk = new WPI_VictorSPX(4);
-    public XboxController m_driverController2 = new XboxController(1);
+    private SpeedController m_walk = new WPI_VictorSPX(Constants.walkMotorID); // 4
+    public XboxController m_driverController2 = new XboxController(Constants.operatorControllerID); // 1
     
     public void SkyWalk(){
         
