@@ -18,24 +18,24 @@ import edu.wpi.first.wpilibj.XboxController;
 
 public class Ingester {
 
-    private SpeedController m_sweep = new WPI_VictorSPX(2);
-    public XboxController m_driverController1 = new XboxController(1);
+    private SpeedController m_sweep = new WPI_VictorSPX(Constants.sweepMotorID); // 2
+    public XboxController m_driverController2 = new XboxController(Constants.operatorControllerID); // 1
 
     public void ingesterSweep() {
-        SmartDashboard.putNumber("Left Trigger Value: ", m_driverController1.getTriggerAxis(Hand.kLeft));
-        SmartDashboard.putNumber("Right Trigger Value: ", m_driverController1.getTriggerAxis(Hand.kRight));
-        if (m_driverController1.getTriggerAxis(Hand.kLeft) > 0.1) {
-            m_sweep.set(m_driverController1.getTriggerAxis(Hand.kLeft) * -1);
+        SmartDashboard.putNumber("Left Trigger Value: ", m_driverController2.getTriggerAxis(Hand.kLeft));
+        SmartDashboard.putNumber("Right Trigger Value: ", m_driverController2.getTriggerAxis(Hand.kRight));
+        if (m_driverController2.getTriggerAxis(Hand.kLeft) > 0.1) {
+            m_sweep.set(m_driverController2.getTriggerAxis(Hand.kLeft) * -1);
         }
-        if (m_driverController1.getTriggerAxis(Hand.kRight) > 0.1) {
-            m_sweep.set(m_driverController1.getTriggerAxis(Hand.kRight));
+        if (m_driverController2.getTriggerAxis(Hand.kRight) > 0.1) {
+            m_sweep.set(m_driverController2.getTriggerAxis(Hand.kRight));
         }
-        if (m_driverController1.getTriggerAxis(Hand.kRight) < 0.1 & m_driverController1.getTriggerAxis(Hand.kLeft) < 0.1) {
+        if (m_driverController2.getTriggerAxis(Hand.kRight) < 0.1 & m_driverController2.getTriggerAxis(Hand.kLeft) < 0.1) {
             m_sweep.set(0.0);
         }
         
-        SmartDashboard.putNumber("Left Trigger Value: ", m_driverController1.getTriggerAxis(Hand.kLeft));
-        SmartDashboard.putNumber("Right Trigger Value: ", m_driverController1.getTriggerAxis(Hand.kRight));
+        SmartDashboard.putNumber("Left Trigger Value: ", m_driverController2.getTriggerAxis(Hand.kLeft));
+        SmartDashboard.putNumber("Right Trigger Value: ", m_driverController2.getTriggerAxis(Hand.kRight));
     }
 
     public void ingesterAuton(double speed){

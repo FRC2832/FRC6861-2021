@@ -11,8 +11,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class ColorWheel {
-    private WPI_TalonSRX m_colorWheel = new WPI_TalonSRX(5);
-    public XboxController m_driverController2 = new XboxController(1);
+    private WPI_TalonSRX m_colorWheel = new WPI_TalonSRX(Constants.colorWheelMotorID); // 5
+    public XboxController m_driverController2 = new XboxController(Constants.operatorControllerID); // 1
     
 public void colorInit() {
     //TODO: Fix this encoder---9 doesn't work curently

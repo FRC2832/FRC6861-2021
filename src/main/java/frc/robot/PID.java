@@ -18,8 +18,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class PID {
     /** Hardware */
-	TalonSRX _talon = new TalonSRX(13);
-	private final XboxController _xBox = new XboxController(1);
+	TalonSRX _talon = new TalonSRX(Constants._talonMotorID); // ID 13
+	private final XboxController _xBox = new XboxController(Constants.operatorControllerID); // ID 1
 
     /** Used to create string thoughout loop */
 	StringBuilder _sb = new StringBuilder();
@@ -102,21 +102,23 @@ public class PID {
 		_sb.append("\tpos:");
 		_sb.append(_talon.getSelectedSensorPosition(0));
 		_sb.append("u"); 	// Native units
-        
-        if (_xBox.getBumperPressed(Hand.kRight)) {
-			targetPositionRotations = 0;
+		
+		_talon.enableCurrentLimit(true); // Enables the current limit
+		_talon.configContinuousCurrentLimit(Constants.ingestorLiftContinuousAmpLimit); // Check for higher or lower amp limit
+        if (_xBox.getBumperPressed(Hand.kRight)) { // Stow position
+			targetPositionRotations = Constants.stowIngestorPos; // 0
 			_talon.set(ControlMode.Position, targetPositionRotations);
 			_gain = Constants.kGainUp;
         }
         
-		if (_xBox.getBButtonPressed()) {
-			targetPositionRotations = -600;
+		if (_xBox.getBButtonPressed()) { // Shooting position
+			targetPositionRotations = Constants.shootingIngestorPos; // -600
 			_talon.set(ControlMode.Position, targetPositionRotations);
 			_gain = Constants.kGainUp;
         }
 
-		if (_xBox.getAButtonPressed()) {
-			targetPositionRotations = -4500;
+		if (_xBox.getAButtonPressed()) { // Down position
+			targetPositionRotations = Constants.lowerIngestorPos; // -4200
 			_talon.set(ControlMode.Position, targetPositionRotations);
 			_gain = Constants.kGainDown;
 		}
